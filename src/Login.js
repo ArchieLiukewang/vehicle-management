@@ -26,6 +26,10 @@ const navigate  = useNavigate();
         const jsonBody = await response.json();
         console.log('user_type'+jsonBody.user_type);
         sessionStorage.setItem('user_type',jsonBody.user_type);
+
+
+        console.log('username'+username);
+        sessionStorage.setItem('username',username);
         toggleNav();
         navigate('/home');
       } else {

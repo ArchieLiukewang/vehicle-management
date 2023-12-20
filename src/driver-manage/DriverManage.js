@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Modal from 'react-modal';
-import UpdateForm from './UpdateVehicleForm';
+import UpdateForm from './UpdateDriverForm';
+import updateUserForm from "../user-info-manage/UpdateUserForm";
 
 const DriverManage = () => {
   const [drivers, setDrivers] = useState([]);
+    
+    const [selectedDriver, setSelectedDrivers] = useState(null);
   // const [rentalData, setRentalData] = useState([]);
-  // const [isModalOpen, setModalOpen] = useState(false);
+  const [isModalOpen, setModalOpen] = useState(false);
   // const [isRentalModalOpen, setRentalModalOpen] = useState(false);
   // const [selectedVehicle, setSelectedVehicle] = useState(null);
 
@@ -93,114 +96,81 @@ const DriverManage = () => {
     textAlign: 'left',
   };
 
+    const handleSubmitDriver=(updatedDriver) => {
+        return undefined;
+    };
+
+  const handleUpdateDriver = (e, SelectedDriver) => {
+      debugger;
+    setSelectedDrivers(SelectedDriver);
+    setModalOpen(true);
+
+  };
   return (
     <div>
       <h1>Drivers Information Management</h1>
       <table style={{ borderCollapse: 'collapse', width: '100%' }}>
         <thead>
-          <tr>
-            <th style={tableCellStyle}>Driver id_card_number</th>
-            <th style={tableCellStyle}>Driver name</th>
-            <th style={tableCellStyle}>Driver gender</th>
-            <th style={tableCellStyle}>Driver birth date</th>
-            <th style={tableCellStyle}>Driver address</th>
-            <th style={tableCellStyle}>Driver phone</th>
-            <th style={tableCellStyle}>Driver license</th>
-          </tr>
+        <tr>
+          <th style={tableCellStyle}>Driver id_card_number</th>
+          <th style={tableCellStyle}>Driver name</th>
+          <th style={tableCellStyle}>Driver gender</th>
+          <th style={tableCellStyle}>Driver birth date</th>
+          <th style={tableCellStyle}>Driver address</th>
+          <th style={tableCellStyle}>Driver phone</th>
+          <th style={tableCellStyle}>Driver license</th>
+          <th style={tableCellStyle}>Driver Action</th>
+        </tr>
         </thead>
         <tbody>
-          {drivers.map((driver) => (
-            <tr>
-              <td style={tableCellStyle}>{driver.id_card_number}</td>
-              <td style={tableCellStyle}>{driver.name}</td>
-              <td style={tableCellStyle}>{driver.gender}</td>
-              <td style={tableCellStyle}>{driver.birth_date}</td>
-              <td style={tableCellStyle}>{driver.address}</td>
-              <td style={tableCellStyle}>{driver.phone}</td>
-              <td style={tableCellStyle}>{driver.license_number}</td>
-         
-              {/* <td style={tableCellStyle}>
-                <button onClick={(e) => handleUpdateVehicle(e, vehicle)}>
-                  Update Vehicle
-                </button>
-                <br></br>                
+        {drivers.map((driver) => (
 
-                <button onClick={(e) => handleQueryRental(e, vehicle)}>
-                Query Rental Information
-                </button>
-              </td> */}
-            </tr>
-          ))}
+
+              (sessionStorage.getItem('username') == driver.name ||sessionStorage.getItem('user_type')=='admin'||
+                  sessionStorage.getItem('user_type')=='customer')&&
+
+
+                    (<tr>
+                      <td style={tableCellStyle}>{driver.id_card_number}</td>
+                      <td style={tableCellStyle}>{driver.name}</td>
+                      <td style={tableCellStyle}>{driver.gender}</td>
+                      <td style={tableCellStyle}>{driver.birth_date}</td>
+                      <td style={tableCellStyle}>{driver.address}</td>
+                      <td style={tableCellStyle}>{driver.phone}</td>
+                      <td style={tableCellStyle}>{driver.license_number}</td>
+                      <button onClick={(e) => handleUpdateDriver(e, driver)}>
+                        Update Driver
+                      </button>
+                      <br></br>
+
+
+                    </tr>)
+
+
+        ))}
         </tbody>
       </table>
 
-      {/* <Modal
-        isOpen={isModalOpen}
-        onRequestClose={() => setModalOpen(false)}
-        style={{
-          overlay: {
-            backgroundColor: 'rgba(0, 0, 0, 0.5)',
-          },
-          content: {
-            width: '50%',
-            margin: 'auto',
-            padding: '20px',
-          },
-        }}
+      <Modal
+          isOpen={isModalOpen}
+          onRequestClose={() => setModalOpen(false)}
+          style={{
+            overlay: {
+              backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            },
+            content: {
+              width: '50%',
+              margin: 'auto',
+              padding: '20px',
+            },
+          }}
       >
-        {selectedVehicle && (
-          <div>
-           
-            <UpdateForm vehicle={selectedVehicle} onUpdate={handleSubmitVehicle} />
-          </div>
+        {selectedDriver && (
+            <div>
+              <UpdateForm user={selectedDriver} onUpdate={handleSubmitDriver} />
+            </div>
         )}
       </Modal>
-
-      <Modal
-        isOpen={isRentalModalOpen}
-        onRequestClose={() => setRentalModalOpen(false)}
-        style={{
-          overlay: {
-            backgroundColor: 'rgba(0, 0, 0, 0.5)',
-          },
-          content: {
-            width: '50%',
-            margin: 'auto',
-            padding: '20px',
-          },
-        }}
-      >
-       {rentalData && selectedVehicle && rentalData.length > 0 && (
-  <div>
-    <h2>Rental Information: {selectedVehicle.vehicle_name} - {selectedVehicle.plate_number}</h2>
-    <table style={{ borderCollapse: 'collapse', width: '100%' }}>
-      <thead>
-        <tr>
-          <th style={tableCellStyle}>Rental Mode</th>
-          <th style={tableCellStyle}>Rental Period</th>
-          <th style={tableCellStyle}>Deposit</th>
-          <th style={tableCellStyle}>Rental Start Date</th>
-          <th style={tableCellStyle}>Rental End Date</th>
-          <th style={tableCellStyle}>Amount Received</th>
-        </tr>
-      </thead>
-      <tbody>
-        {rentalData.map((rental) => (
-          <tr key={rental.id_card_number}>
-            <td style={tableCellStyle}>{rental.rental_mode}</td>
-            <td style={tableCellStyle}>{rental.rental_period}</td>
-            <td style={tableCellStyle}>{rental.deposit}</td>
-            <td style={tableCellStyle}>{rental.rental_start_date}</td>
-            <td style={tableCellStyle}>{rental.rental_end_date}</td>
-            <td style={tableCellStyle}>{rental.amount_received}</td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  </div>
-)}
-
-      </Modal>      */}
     </div>
   );
   

@@ -140,6 +140,10 @@ const VehicleManagement = () => {
         axios.put(`http://localhost:5000/api/vehicles/${selectedVehicle.plate_number}`, selectedVehicle)
             .then(response => {
                 console.log('Vehicle updated successfully:', response.data);
+                axios.put(`http://localhost:5000/api/return-vehicle/${selectedVehicle.plate_number}`)
+                    .catch(error => console.error('Error updating vehicle:', error));
+
+
                 // Refresh the vehicles list after update
                 axios.get('http://localhost:5000/api/vehicles')
                     .then(response => setVehicles(response.data))

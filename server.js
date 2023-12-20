@@ -461,7 +461,7 @@ app.put('/api/users/add', (req, res) => {
 //driver
 
 // Get all drivers API endpoint
-app.get('/drivers/all', (req, res) => {
+app.get('/api/drivers/all', (req, res) => {
   // Retrieve all drivers from the MySQL database using the connection pool
   const queryAllDrivers = 'SELECT * FROM drivers';
 
@@ -475,16 +475,76 @@ app.get('/drivers/all', (req, res) => {
   });
 });
 
+app.put('/api/drivers/update/:id_card_number', (req, res) => {
+    const { id_card_number } = req.params;
+    const updatedDriver = req.body;
 
+    const queryUpdateDriver = 'UPDATE drivers SET ? WHERE id_card_number = ?';
+
+    const formattedBirthdate = new Date(updatedDriver.birth_date).toISOString().split('T')[0];
+
+    updatedDriver.birth_date = formattedBirthdate;
+    pool.query(queryUpdateDriver, [updatedDriver, id_card_number], (err, result) => {
+        if (err) {
+            console.error('Error updating driver in MySQL database:', err);
+            res.status(500).json({ error: 'Internal Server Error' });
+        } else {
+            if (result.affectedRows > 0) {
+                res.json({ message: 'Driver updated successfully' });
+            } else {
+                res.status(404).json({ error: 'Driver not found' });
+            }
+        }
+    });
+});
+
+app.put('/api/return-vehicle/:plate_number', (req, res) => {
+    const { plate_number } = req.params;
+    const queryGetRentals = 'SELECT * FROM rentals WHERE plate_number = ?';
+    const queryGetMaxRentalId = 'SELECT MAX(rental_id) AS max_rental_id FROM rentals WHERE plate_number = ?';
+    const queryUpdateAmountReceived =
+        'UPDATE rentals SET amount_received = rental_period * rental_rate WHERE rental_id = ?';
+
+    pool.query(queryGetRentals, [plate_number], (err, result) => {
+        if (err) {
+            console.error('Error querying rentals by plate_number in MySQL database:', err);
+            res.status(500).json({ error: 'Internal Server Error' });
+            return;
+        }
+
+        if (result.length === 0) {
+            res.status(404).json({ error: 'No rentals found for the given plate_number' });
+            return;
+        }
+
+        const rentalData = result;
+
+        pool.query(queryGetMaxRentalId, [plate_number], (maxRentalIdErr, maxRentalIdResult) => {
+            if (maxRentalIdErr) {
+                console.error('Error getting max rental_id in MySQL database:', maxRentalIdErr);
+                res.status(500).json({ error: 'Internal Server Error' });
+                return;
+            }
+
+            const maxRentalId = maxRentalIdResult[0].max_rental_id;
+
+            if (maxRentalId) {
+                pool.query(queryUpdateAmountReceived, [maxRentalId], (updateErr, updateResult) => {
+                    if (updateErr) {
+                        console.error('Error updating amount_received in MySQL database:', updateErr);
+                        res.status(500).json({ error: 'Internal Server Error' });
+                    } else {
+                        res.json({ message: 'Records and amount_received updated successfully', rentalData });
+                    }
+                });
+            } else {
+                res.status(404).json({ error: 'No rentals found for the given plate_number' });
+            }
+        });
+    });
+});
 //api end
 
-// app.get('/', (req, res) => {
-//   console.log(__dirname)
-//   console.log("aaa")
-//   // const pa = path.join(__dirname, 'build/index.html');
-//   // console.log(pa)
-//   res.sendFile(path.join(__dirname, 'build/index.html'));
-// });
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);

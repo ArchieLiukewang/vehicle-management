@@ -17,31 +17,6 @@ const UserManage = () => {
       .catch(error => console.error('Error fetching vehicles:', error));
   }, []);
 
-  // const handleVehicleClick = (vehicle) => {
-  //   // Fetch rental information for the selected vehicle
-  //   axios.get(`http://localhost:5000/api/rentals/${vehicle.plate_number}`)
-  //     .then(response => {
-  //       // Handle rental data as needed
-  //       console.log('Rental information:', response.data);
-  //     })
-  //     .catch(error => console.error('Error fetching rentals:', error));
-
-  //   // Set the selected vehicle for further operations
-  //   setSelectedVehicle(vehicle);
-  // };
-
-//   const handleUpdateVehicle = (updatedData) => {
-//     // Update the vehicle using the plate_number
-//     axios.put(`http://localhost:5000/api/vehicles/${selectedVehicle.plate_number}`, updatedData)
-//       .then(response => {
-//         console.log('Vehicle updated successfully:', response.data);
-//         // Refresh the vehicles list after update
-//         axios.get('http://localhost:5000/api/vehicles')
-//           .then(response => setVehicles(response.data))
-//           .catch(error => console.error('Error fetching vehicles:', error));
-//       })
-//       .catch(error => console.error('Error updating vehicle:', error));
-//   };
 
 const handleUpdateUser = (e,oldUser) => {   
     setSelectedUser(oldUser);
@@ -67,7 +42,7 @@ const handleUpdateUser = (e,oldUser) => {
     // ...
 
     // Update the state with the new data
-    
+
     setSelectedUser(null);
     setModalOpen(false);
 
@@ -109,7 +84,10 @@ const handleUpdateUser = (e,oldUser) => {
         <thead>
           <tr>
             <th style={tableCellStyle}>User Name</th>
-            <th style={tableCellStyle}>Password</th>
+              {(sessionStorage.getItem('user_type') == 'admin' ||  sessionStorage.getItem('user_type') == 'system_admin')&&
+
+                  <th style={tableCellStyle}>Password</th>
+              }
             <th style={tableCellStyle}>User Type</th>
               {(sessionStorage.getItem('user_type') == 'admin' ||  sessionStorage.getItem('user_type') == 'system_admin')&&
 
@@ -121,7 +99,10 @@ const handleUpdateUser = (e,oldUser) => {
           {users.map((user) => (
             <tr>
               <td style={tableCellStyle}>{user.username}</td>
-              <td style={tableCellStyle}>{user.password}</td>
+                {(sessionStorage.getItem('user_type') == 'admin' ||  sessionStorage.getItem('user_type') == 'system_admin')&&
+
+                    <td style={tableCellStyle}>{user.password}</td>
+                }
               <td style={tableCellStyle}>{user.user_type}</td>
                 {(sessionStorage.getItem('user_type') == 'admin' ||  sessionStorage.getItem('user_type') == 'system_admin')&&
 
@@ -162,51 +143,6 @@ const handleUpdateUser = (e,oldUser) => {
         )}
       </Modal>
 
-      {/* <Modal
-        isOpen={isRentalModalOpen}
-        onRequestClose={() => setRentalModalOpen(false)}
-        style={{
-          overlay: {
-            backgroundColor: 'rgba(0, 0, 0, 0.5)',
-          },
-          content: {
-            width: '50%',
-            margin: 'auto',
-            padding: '20px',
-          },
-        }}
-      >
-       {rentalData && selectedVehicle && rentalData.length > 0 && (
-  <div>
-    <h2>Rental Information: {selectedVehicle.vehicle_name} - {selectedVehicle.plate_number}</h2>
-    <table style={{ borderCollapse: 'collapse', width: '100%' }}>
-      <thead>
-        <tr>
-          <th style={tableCellStyle}>Rental Mode</th>
-          <th style={tableCellStyle}>Rental Period</th>
-          <th style={tableCellStyle}>Deposit</th>
-          <th style={tableCellStyle}>Rental Start Date</th>
-          <th style={tableCellStyle}>Rental End Date</th>
-          <th style={tableCellStyle}>Amount Received</th>
-        </tr>
-      </thead>
-      <tbody>
-        {rentalData.map((rental) => (
-          <tr key={rental.id_card_number}>
-            <td style={tableCellStyle}>{rental.rental_mode}</td>
-            <td style={tableCellStyle}>{rental.rental_period}</td>
-            <td style={tableCellStyle}>{rental.deposit}</td>
-            <td style={tableCellStyle}>{rental.rental_start_date}</td>
-            <td style={tableCellStyle}>{rental.rental_end_date}</td>
-            <td style={tableCellStyle}>{rental.amount_received}</td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  </div>
-)}
-
-      </Modal>      */}
     </div>
   );
   

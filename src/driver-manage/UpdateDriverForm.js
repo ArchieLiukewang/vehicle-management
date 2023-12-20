@@ -54,7 +54,7 @@ const UpdateDriverForm = ({ driver, onUpdate }) => {
           <label>
             Birth Date:
             <input
-                type="date"
+                type="txt"
                 value={updatedDriver.birth_date}
                 onChange={(e) => handleInputChange('birth_date', e.target.value)}
             />

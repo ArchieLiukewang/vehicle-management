@@ -24,6 +24,7 @@ const UpdateDriverForm = ({ driver, onUpdate }) => {
           <input
               type="text"
               value={driver.id_card_number}
+              readOnly
               onChange={(e) => handleInputChange('id_card_number', e.target.value)}
           />
         </label>

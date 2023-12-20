@@ -111,7 +111,10 @@ const handleUpdateUser = (e,oldUser) => {
             <th style={tableCellStyle}>User Name</th>
             <th style={tableCellStyle}>Password</th>
             <th style={tableCellStyle}>User Type</th>
-            <th style={tableCellStyle}>Actions</th>
+              {(sessionStorage.getItem('user_type') == 'admin' ||  sessionStorage.getItem('user_type') == 'system_admin')&&
+
+                  <th style={tableCellStyle}>Actions</th>
+              }
           </tr>
         </thead>
         <tbody>
@@ -120,7 +123,9 @@ const handleUpdateUser = (e,oldUser) => {
               <td style={tableCellStyle}>{user.username}</td>
               <td style={tableCellStyle}>{user.password}</td>
               <td style={tableCellStyle}>{user.user_type}</td>
-              <td style={tableCellStyle}>
+                {(sessionStorage.getItem('user_type') == 'admin' ||  sessionStorage.getItem('user_type') == 'system_admin')&&
+
+                    <td style={tableCellStyle}>
                 <button onClick={(e) => handleUpdateUser(e, user)}>
                   Update User
                 </button>
@@ -130,6 +135,7 @@ const handleUpdateUser = (e,oldUser) => {
                 Query Rental Information
                 </button> */}
               </td>
+                }
             </tr>
           ))}
         </tbody>

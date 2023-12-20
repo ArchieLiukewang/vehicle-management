@@ -64,10 +64,10 @@ app.post('/api/login', (req, res) => {
     // Check if the query returned any results
     if (results.length > 0) {
       // User is found, send a success response
-      res.json({ success: true, message: 'Login successful' });
+      res.json({ success: true, message: 'Login successful' ,user_type:results[0].user_type});
     } else {
       // User is not found, send an authentication failure response
-      res.status(401).json({ success: false, message: 'Invalid username or password' });
+      res.status(401).json({ success: false, message: 'Invalid username or password'});
     }
   });
 });
@@ -164,64 +164,7 @@ app.get('/rentals/all', (req, res) => {
   });
 });
 
-// Update API endpoint
-// app.put('/rentals/update/:rental_id', (req, res) => {
-//     const driverId = req.params.rental_id;
-//     const {
-//         plate_number,
-//         id_card_number,
-//         rental_mode,
-//         rental_rate,
-//         rental_period,
-//         deposit,
-//         rental_start_date,
-//         rental_end_date,
-//         amount_received
-//     } = req.body;
 
-//     // Validation (you might want to add more validation)
-//     if (!driverId) {
-//         return res.status(400).json({ error: 'Driver ID is required for updating.' });
-//     }
-
-//     // Update the rental information in the MySQL database using the connection pool
-//     const updateQuery = `
-//         UPDATE rentals
-//         SET
-//             plate_number = ?,
-//             id_card_number = ?,
-//             rental_mode = ?,
-//             rental_rate = ?,
-//             rental_period = ?,
-//             deposit = ?,
-//             rental_start_date = ?,
-//             rental_end_date = ?,
-//             amount_received = ?
-//         WHERE driver_id = ?
-//     `;
-
-//     const values = [
-//         plate_number,
-//         id_card_number,
-//         rental_mode,
-//         rental_rate,
-//         rental_period,
-//         deposit,
-//         rental_start_date,
-//         rental_end_date,
-//         amount_received,
-//         driverId
-//     ];
-
-//     pool.query(updateQuery, values, (err, result) => {
-//         if (err) {
-//             console.error('Error updating rental information in MySQL database:', err);
-//             res.status(500).json({ error: 'Internal Server Error' });
-//         } else {
-//             res.json({ message: 'Rental information updated successfully.' });
-//         }
-//     });
-// });
 
 app.put('/api/update-rental/:rentalId', (req, res) => {
   const rentalId = req.params.rentalId;
@@ -264,6 +207,22 @@ app.put('/api/update-rental/:rentalId', (req, res) => {
     console.error('Error updating rental:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
+});
+
+app.put('/api/add-rental', (req, res) => {
+    const newRental = req.body;
+
+    // Insert new rental into the database
+
+    pool.query('INSERT INTO rentals SET ?', newRental, (error, results) => {
+        if (error) {
+            console.error('Error inserting rental record: ' + error.stack);
+            res.status(500).send('Error inserting rental record');
+        } else {
+            console.log('Inserted new rental record with ID: ' + results.insertId);
+            res.status(201).send('New rental record added');
+        }
+    });
 });
 
 

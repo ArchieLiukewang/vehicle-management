@@ -10,7 +10,7 @@ const navigate  = useNavigate();
 
 
   const handleLogin = async () => {
-    console.log("username"+username);
+
     try {
       const response = await fetch('http://localhost:5000/api/login', {
         method: 'POST',
@@ -19,11 +19,14 @@ const navigate  = useNavigate();
         },
         body: JSON.stringify({ username, password }),
       });
-  
       if (response.ok) {
-        toggleNav();
+
         // Authentication successful
         console.log('Login successful');
+        const jsonBody = await response.json();
+        console.log('user_type'+jsonBody.user_type);
+        sessionStorage.setItem('user_type',jsonBody.user_type);
+        toggleNav();
         navigate('/home');
       } else {
         // Authentication failed

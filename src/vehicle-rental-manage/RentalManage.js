@@ -105,7 +105,9 @@ const handleSubmitRental = (updatedRental) => {
             <th style={tableCellStyle}>Rental Start Date </th>
             <th style={tableCellStyle}>Rental End Date</th>
             <th style={tableCellStyle}>Amount Recieved</th>
-            <th style={tableCellStyle}>Action</th>
+              {(sessionStorage.getItem('user_type') == 'admin' ||  sessionStorage.getItem('user_type') == 'system_admin')&&
+                  <th style={tableCellStyle}>Action</th>
+              }
           </tr>
         </thead>
         <tbody>
@@ -122,8 +124,9 @@ const handleSubmitRental = (updatedRental) => {
               <td style={tableCellStyle}>{rental.rental_start_date}</td>
               <td style={tableCellStyle}>{rental.rental_end_date}</td>
               <td style={tableCellStyle}>{rental.amount_received}</td>
-              
-              <td style={tableCellStyle}>
+                {(sessionStorage.getItem('user_type') == 'admin' ||  sessionStorage.getItem('user_type') == 'system_admin')&&
+
+                    <td style={tableCellStyle}>
                 
                 <button onClick={(e) => handleGenerateContract(rental)}>
                   Generate Contract
@@ -134,6 +137,7 @@ const handleSubmitRental = (updatedRental) => {
                 </button>
                 <br></br>                
               </td>
+                }
             </tr>
           ))}
         </tbody>

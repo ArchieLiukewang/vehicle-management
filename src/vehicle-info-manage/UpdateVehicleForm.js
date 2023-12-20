@@ -72,6 +72,7 @@ const UpdateVehicleForm = ({ vehicle, onUpdate }) => {
             onChange={(e) => handleInputChange('rental_rate', e.target.value)}
           />
         </label>
+
         
         {/* Add similar input fields for other vehicle fields */}
         <br />

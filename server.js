@@ -73,8 +73,8 @@ app.post('/api/login', (req, res) => {
 });
 
 
-
-
+//**********************************************************************
+//vehicles
 // Get all vehicles
 app.get('/api/vehicles', (req, res) => {
   pool.query('SELECT * FROM vehicles', (error, results, fields) => {
@@ -115,8 +115,42 @@ app.put('/api/vehicles/:plate_number', (req, res) => {
   });
 });
 
+app.post('/api/vehicles/add', (req, res) => {
+    const newVehicle = req.body;
 
+    const queryAddVehicle = 'INSERT INTO vehicles SET ?';
 
+    const formattedPurchaseDate = new Date(newVehicle.purchase_date).toISOString().split('T')[0];
+    newVehicle.purchase_date = formattedPurchaseDate;
+
+    pool.query(queryAddVehicle, newVehicle, (err, result) => {
+        if (err) {
+            console.error('Error adding vehicle to MySQL database:', err);
+            res.status(500).json({ error: 'Internal Server Error' });
+        } else {
+            res.json({ message: 'Vehicle added successfully', insertedId: result.insertId });
+        }
+    });
+});
+
+app.delete('/api/vehicles/delete/:plate_number', (req, res) => {
+    const { plate_number } = req.params;
+
+    const queryDeleteVehicle = 'DELETE FROM vehicles WHERE plate_number = ?';
+
+    pool.query(queryDeleteVehicle, [plate_number], (err, result) => {
+        if (err) {
+            console.error('Error deleting vehicle from MySQL database:', err);
+            res.status(500).json({ error: 'Internal Server Error' });
+        } else {
+            if (result.affectedRows > 0) {
+                res.json({ message: 'Vehicle deleted successfully' });
+            } else {
+                res.status(404).json({ error: 'Vehicle not found' });
+            }
+        }
+    });
+});
 
 
 //************************************************************************* */
@@ -491,6 +525,43 @@ app.put('/api/drivers/update/:id_card_number', (req, res) => {
         } else {
             if (result.affectedRows > 0) {
                 res.json({ message: 'Driver updated successfully' });
+            } else {
+                res.status(404).json({ error: 'Driver not found' });
+            }
+        }
+    });
+});
+
+app.post('/api/drivers/add', (req, res) => {
+    const newDriver = req.body;
+
+    const queryAddDriver = 'INSERT INTO drivers SET ?';
+
+    const formattedBirthdate = new Date(newDriver.birth_date).toISOString().split('T')[0];
+    newDriver.birth_date = formattedBirthdate;
+
+    pool.query(queryAddDriver, newDriver, (err, result) => {
+        if (err) {
+            console.error('Error adding driver to MySQL database:', err);
+            res.status(500).json({ error: 'Internal Server Error' });
+        } else {
+            res.json({ message: 'Driver added successfully', insertedId: result.insertId });
+        }
+    });
+});
+
+app.delete('/api/drivers/delete/:id_card_number', (req, res) => {
+    const { id_card_number } = req.params;
+
+    const queryDeleteDriver = 'DELETE FROM drivers WHERE id_card_number = ?';
+
+    pool.query(queryDeleteDriver, [id_card_number], (err, result) => {
+        if (err) {
+            console.error('Error deleting driver from MySQL database:', err);
+            res.status(500).json({ error: 'Internal Server Error' });
+        } else {
+            if (result.affectedRows > 0) {
+                res.json({ message: 'Driver deleted successfully' });
             } else {
                 res.status(404).json({ error: 'Driver not found' });
             }

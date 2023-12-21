@@ -2,8 +2,18 @@
 
 import React, { useState } from 'react';
 
-const UpdateVehicleForm = ({ vehicle, onUpdate }) => {
-  const [updatedVehicle, setUpdatedVehicle] = useState(vehicle);
+const UpdateVehicleForm = ({ vehicle, onUpdate, isAddVehicle }) => {
+  const defaultVehicle = {
+    plate_number: 'please input plate number here',
+    vehicle_type: 'Sedan',
+    vehicle_name: 'Generic Vehicle',
+    price: 20000.00,
+    purchase_date: '2023-01-01',
+    vehicle_condition: 'New',
+    rental_rate: 100.00
+  };
+
+  const [updatedVehicle, setUpdatedVehicle] = useState(vehicle || defaultVehicle);
 
   const handleInputChange = (field, value) => {
     setUpdatedVehicle((prevVehicle) => ({ ...prevVehicle, [field]: value }));
@@ -31,7 +41,7 @@ const UpdateVehicleForm = ({ vehicle, onUpdate }) => {
           Plate Number:
           <input
             type="text"
-            readOnly
+            readOnly={!isAddVehicle}
             value={updatedVehicle.plate_number}
             onChange={(e) => handleInputChange('plate_number', e.target.value)}
           />

@@ -11,6 +11,7 @@ const VehicleManagement = () => {
     const [isRentalModalOpen, setRentalModalOpen] = useState(false);
     const [selectedVehicle, setSelectedVehicle] = useState(null);
     const [isRentVehicleModalOpen,setRentVehicleModalOpen] = useState(false);
+    const[isAddVehicle,setAddVehicle] = useState(false);
 
     useEffect(() => {
         // Fetch all vehicles on component mount
@@ -45,17 +46,27 @@ const VehicleManagement = () => {
     const handleSubmitVehicle = (updatedVehicle) => {
         // Update the database or perform any necessary action
         // Here you can use Axios or another method to send the updatedVehicle data to your backend
-
-        axios.put(`http://localhost:5000/api/vehicles/${selectedVehicle.plate_number}`, updatedVehicle)
-            .then(response => {
-                console.log('Vehicle updated successfully:', response.data);
-                // Refresh the vehicles list after update
-                axios.get('http://localhost:5000/api/vehicles')
-                    .then(response => setVehicles(response.data))
-                    .catch(error => console.error('Error fetching vehicles:', error));
-            })
-            .catch(error => console.error('Error updating vehicle:', error));
-
+        if(isAddVehicle){
+            axios.post(`http://localhost:5000/api/vehicles/add`, updatedVehicle)
+                .then(response => {
+                    console.log('Vehicle updated successfully:', response.data);
+                    // Refresh the vehicles list after update
+                    axios.get('http://localhost:5000/api/vehicles')
+                        .then(response => setVehicles(response.data))
+                        .catch(error => console.error('Error fetching vehicles:', error));
+                })
+                .catch(error => console.error('Error updating vehicle:', error));
+        }else {
+            axios.put(`http://localhost:5000/api/vehicles/${selectedVehicle.plate_number}`, updatedVehicle)
+                .then(response => {
+                    console.log('Vehicle updated successfully:', response.data);
+                    // Refresh the vehicles list after update
+                    axios.get('http://localhost:5000/api/vehicles')
+                        .then(response => setVehicles(response.data))
+                        .catch(error => console.error('Error fetching vehicles:', error));
+                })
+                .catch(error => console.error('Error updating vehicle:', error));
+        }
         // ...
 
         // Update the state with the new data
@@ -155,6 +166,21 @@ const VehicleManagement = () => {
     };
 
 
+    const handleAddVehicle = (e) => {
+        setAddVehicle(true);
+        setModalOpen(true);
+    };
+    const handleDeleteVehicle = (e, vehicle) => {
+        axios.delete(`http://localhost:5000/api/vehicles/delete/${vehicle.plate_number}`)
+            .then(response => {
+                console.log('Vehicle updated successfully:', response.data);
+                // Refresh the vehicles list after update
+                axios.get('http://localhost:5000/api/vehicles')
+                    .then(response => setVehicles(response.data))
+                    .catch(error => console.error('Error fetching vehicles:', error));
+            })
+            .catch(error => console.error('Error updating vehicle:', error));
+    };
     return (
         <div>
             <h1>Vehicle Information Management</h1>
@@ -185,10 +211,14 @@ const VehicleManagement = () => {
 
                             {
 
-                                (sessionStorage.getItem("user_type") == 'admin' || sessionStorage.getItem("user_type") == 'system_admin'  ) && (
+                                (sessionStorage.getItem("user_type") == 'admin' || sessionStorage.getItem("user_type") == 'system_admin') && (
                                     <div>
                                         <button onClick={(e) => handleUpdateVehicle(e, vehicle)}>
                                             Update Vehicle
+                                        </button>
+                                        <br></br>
+                                        <button onClick={(e) => handleDeleteVehicle(e, vehicle)}>
+                                            Delete Vehicle
                                         </button>
                                         <br></br>
                                     </div>
@@ -214,6 +244,12 @@ const VehicleManagement = () => {
                 </tbody>
             </table>
 
+            {(sessionStorage.getItem("user_type") == 'admin' )&&
+            <button onClick={(e) => handleAddVehicle(e)}>
+                Add Vehicle
+            </button>
+            }
+
             <Modal
                 isOpen={isModalOpen}
                 onRequestClose={() => setModalOpen(false)}
@@ -231,6 +267,12 @@ const VehicleManagement = () => {
                 {selectedVehicle && (
                     <div>
                         <UpdateForm vehicle={selectedVehicle} onUpdate={handleSubmitVehicle}/>
+                    </div>
+                )}
+
+                {isAddVehicle && (
+                    <div>
+                        <UpdateForm  onUpdate={handleSubmitVehicle} isAddVehicle={isAddVehicle}/>
                     </div>
                 )}
             </Modal>

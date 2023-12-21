@@ -1,9 +1,20 @@
 // UpdateForm.js
 
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 
-const UpdateDriverForm = ({ driver, onUpdate }) => {
-  const [updatedDriver, setUpdatedDriver] = useState(driver);
+const UpdateDriverForm = ({ driver, onUpdate , isAddDriver}) => {
+  const defaultDriver = {
+    id_card_number: 'please add id card number here',
+    name: 'John Doe',
+    gender: 'Male',
+    birth_date: '1900-01-01',
+    address: '123 Main St, Cityville',
+    phone: '555-1234',
+    license_number: 'ABC123XYZ',
+  };
+
+  const [updatedDriver, setUpdatedDriver] = useState(driver || defaultDriver);
+
 
   const handleInputChange = (field, value) => {
     setUpdatedDriver((prevDriver) => ({ ...prevDriver, [field]: value }));
@@ -23,8 +34,8 @@ const UpdateDriverForm = ({ driver, onUpdate }) => {
           Driver Name:
           <input
               type="text"
-              value={driver.id_card_number}
-              readOnly
+              value={updatedDriver.id_card_number}
+              readOnly = {!isAddDriver}
               onChange={(e) => handleInputChange('id_card_number', e.target.value)}
           />
         </label>

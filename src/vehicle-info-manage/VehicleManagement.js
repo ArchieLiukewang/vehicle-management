@@ -1,8 +1,11 @@
 import React, {useState, useEffect} from 'react';
 import axios from 'axios';
-import Modal from 'react-modal';
+// import Modal from 'react-modal';
 import UpdateForm from './UpdateVehicleForm';
 import RentVehicleForm from "./RentVehicleForm";
+import { Button, Modal, Table } from 'semantic-ui-react'
+
+
 
 const VehicleManagement = () => {
     const [vehicles, setVehicles] = useState([]);
@@ -184,102 +187,89 @@ const VehicleManagement = () => {
     return (
         <div>
             <h1>Vehicle Information Management</h1>
-            <table style={{borderCollapse: 'collapse', width: '100%'}}>
-                <thead>
-                <tr>
-                    <th style={tableCellStyle}>Vehicle Name</th>
-                    <th style={tableCellStyle}>Plate Number</th>
-                    <th style={tableCellStyle}>Vehicle Type</th>
-                    <th style={tableCellStyle}>Price</th>
-                    <th style={tableCellStyle}>Purchase Date</th>
-                    <th style={tableCellStyle}>Vehicle Condition</th>
-                    <th style={tableCellStyle}>Rental Rate</th>
-                    <th style={tableCellStyle}>Actions</th>
-                </tr>
-                </thead>
-                <tbody>
-                {vehicles.map((vehicle) => (
-                    <tr>
-                        <td style={tableCellStyle}>{vehicle.vehicle_name}</td>
-                        <td style={tableCellStyle}>{vehicle.plate_number}</td>
-                        <td style={tableCellStyle}>{vehicle.vehicle_type}</td>
-                        <td style={tableCellStyle}>{vehicle.price}</td>
-                        <td style={tableCellStyle}>{vehicle.purchase_date}</td>
-                        <td style={tableCellStyle}>{vehicle.vehicle_condition}</td>
-                        <td style={tableCellStyle}>{vehicle.rental_rate}</td>
-                        <td style={tableCellStyle}>
-
-                            {
-
-                                (sessionStorage.getItem("user_type") == 'admin' || sessionStorage.getItem("user_type") == 'system_admin') && (
+            <Table celled style={{ width: '100%' }}>
+                <Table.Header>
+                    <Table.Row>
+                        <Table.HeaderCell>Vehicle Name</Table.HeaderCell>
+                        <Table.HeaderCell>Plate Number</Table.HeaderCell>
+                        <Table.HeaderCell>Vehicle Type</Table.HeaderCell>
+                        <Table.HeaderCell>Price</Table.HeaderCell>
+                        <Table.HeaderCell>Purchase Date</Table.HeaderCell>
+                        <Table.HeaderCell>Vehicle Condition</Table.HeaderCell>
+                        <Table.HeaderCell>Rental Rate</Table.HeaderCell>
+                        <Table.HeaderCell>Actions</Table.HeaderCell>
+                    </Table.Row>
+                </Table.Header>
+                <Table.Body>
+                    {vehicles.map((vehicle) => (
+                        <Table.Row key={vehicle.plate_number}>
+                            <Table.Cell>{vehicle.vehicle_name}</Table.Cell>
+                            <Table.Cell>{vehicle.plate_number}</Table.Cell>
+                            <Table.Cell>{vehicle.vehicle_type}</Table.Cell>
+                            <Table.Cell>{vehicle.price}</Table.Cell>
+                            <Table.Cell>{vehicle.purchase_date}</Table.Cell>
+                            <Table.Cell>{vehicle.vehicle_condition}</Table.Cell>
+                            <Table.Cell>{vehicle.rental_rate}</Table.Cell>
+                            <Table.Cell>
+                                {(sessionStorage.getItem("user_type") === 'admin' || sessionStorage.getItem("user_type") === 'system_admin') && (
                                     <div>
-                                        <button onClick={(e) => handleUpdateVehicle(e, vehicle)}>
+                                        <Button onClick={(e) => handleUpdateVehicle(e, vehicle)}>
                                             Update Vehicle
-                                        </button>
-                                        <br></br>
-                                        <button onClick={(e) => handleDeleteVehicle(e, vehicle)}>
+                                        </Button>
+                                        <Button onClick={(e) => handleDeleteVehicle(e, vehicle)}>
                                             Delete Vehicle
-                                        </button>
-                                        <br></br>
+                                        </Button>
                                     </div>
-                                )
-                            }
-                            <button onClick={(e) => handleQueryRental(e, vehicle)}>
-                                Query Rental Information
-                            </button>
+                                )}
+                                <Button onClick={(e) => handleQueryRental(e, vehicle)}>
+                                    Query Rental Information
+                                </Button>
+                                <Button onClick={(e) => { setSelectedVehicle(vehicle); setRentVehicleModalOpen(true); }}>
+                                    Rent Vehicle
+                                </Button>
+                                <Button onClick={(e) => handleReturnVehicle(e, vehicle)}>
+                                    Return Vehicle
+                                </Button>
+                            </Table.Cell>
+                        </Table.Row>
+                    ))}
+                </Table.Body>
+            </Table>
 
-                            <br></br>
-                            <button onClick={(e) => handleRentVehicle(e, vehicle)}>
-                                Rent Vehicle
-                            </button>
-
-                            <br></br>
-                            <button onClick={(e) => handleReturnVehicle(e, vehicle)}>
-                                Return Vehicle
-                            </button>
-
-                        </td>
-                    </tr>
-                ))}
-                </tbody>
-            </table>
-
-            {(sessionStorage.getItem("user_type") == 'admin' )&&
-            <button onClick={(e) => handleAddVehicle(e)}>
-                Add Vehicle
-            </button>
+            {sessionStorage.getItem("user_type") === 'admin' &&
+                <Button onClick={(e) => { setAddVehicle(true); setModalOpen(true); }}>
+                    Add Vehicle
+                </Button>
             }
 
             <Modal
-                isOpen={isModalOpen}
-                onRequestClose={() => setModalOpen(false)}
-                style={{
-                    overlay: {
-                        backgroundColor: 'rgba(0, 0, 0, 0.5)',
-                    },
-                    content: {
-                        width: '50%',
-                        margin: 'auto',
-                        padding: '20px',
-                    },
+                open={isModalOpen}
+                onClose={() => setModalOpen(false)}
+                style={ {
+                    width: '30%', // Adjust the width as needed
+                    margin: 'auto',
+                    backgroundColor: 'white',
+                    padding: '20px',
+                    borderRadius: '8px',
+                    boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
                 }}
             >
-                {selectedVehicle && (
+                {(selectedVehicle && !isAddVehicle) && (
                     <div>
-                        <UpdateForm vehicle={selectedVehicle} onUpdate={handleSubmitVehicle}/>
+                        <UpdateForm vehicle={selectedVehicle} onUpdate={handleSubmitVehicle} />
                     </div>
                 )}
 
                 {isAddVehicle && (
                     <div>
-                        <UpdateForm  onUpdate={handleSubmitVehicle} isAddVehicle={isAddVehicle}/>
+                        <UpdateForm onUpdate={handleSubmitVehicle} isAddVehicle={isAddVehicle} />
                     </div>
                 )}
             </Modal>
 
             <Modal
-                isOpen={isRentalModalOpen}
-                onRequestClose={() => setRentalModalOpen(false)}
+                open={isRentalModalOpen}
+                onClose={() => {setRentalModalOpen(false);setRentalData(null)}}
                 style={{
                     overlay: {
                         backgroundColor: 'rgba(0, 0, 0, 0.5)',
@@ -294,38 +284,37 @@ const VehicleManagement = () => {
                 {rentalData && selectedVehicle && rentalData.length > 0 && (
                     <div>
                         <h2>Rental Information: {selectedVehicle.vehicle_name} - {selectedVehicle.plate_number}</h2>
-                        <table style={{borderCollapse: 'collapse', width: '100%'}}>
-                            <thead>
-                            <tr>
-                                <th style={tableCellStyle}>Rental Mode</th>
-                                <th style={tableCellStyle}>Rental Period</th>
-                                <th style={tableCellStyle}>Deposit</th>
-                                <th style={tableCellStyle}>Rental Start Date</th>
-                                <th style={tableCellStyle}>Rental End Date</th>
-                                <th style={tableCellStyle}>Amount Received</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {rentalData.map((rental) => (
-                                <tr key={rental.id_card_number}>
-                                    <td style={tableCellStyle}>{rental.rental_mode}</td>
-                                    <td style={tableCellStyle}>{rental.rental_period}</td>
-                                    <td style={tableCellStyle}>{rental.deposit}</td>
-                                    <td style={tableCellStyle}>{rental.rental_start_date}</td>
-                                    <td style={tableCellStyle}>{rental.rental_end_date}</td>
-                                    <td style={tableCellStyle}>{rental.amount_received}</td>
-                                </tr>
-                            ))}
-                            </tbody>
-                        </table>
+                        <Table celled style={{ width: '100%' }}>
+                            <Table.Header>
+                                <Table.Row>
+                                    <Table.HeaderCell>Rental Mode</Table.HeaderCell>
+                                    <Table.HeaderCell>Rental Period</Table.HeaderCell>
+                                    <Table.HeaderCell>Deposit</Table.HeaderCell>
+                                    <Table.HeaderCell>Rental Start Date</Table.HeaderCell>
+                                    <Table.HeaderCell>Rental End Date</Table.HeaderCell>
+                                    <Table.HeaderCell>Amount Received</Table.HeaderCell>
+                                </Table.Row>
+                            </Table.Header>
+                            <Table.Body>
+                                {rentalData.map((rental) => (
+                                    <Table.Row key={rental.id_card_number}>
+                                        <Table.Cell>{rental.rental_mode}</Table.Cell>
+                                        <Table.Cell>{rental.rental_period}</Table.Cell>
+                                        <Table.Cell>{rental.deposit}</Table.Cell>
+                                        <Table.Cell>{rental.rental_start_date}</Table.Cell>
+                                        <Table.Cell>{rental.rental_end_date}</Table.Cell>
+                                        <Table.Cell>{rental.amount_received}</Table.Cell>
+                                    </Table.Row>
+                                ))}
+                            </Table.Body>
+                        </Table>
                     </div>
                 )}
-
             </Modal>
 
             <Modal
-                isOpen={isRentVehicleModalOpen}
-                onRequestClose={() => setRentVehicleModalOpen(false)}
+                open={isRentVehicleModalOpen}
+                onClose={() => setRentVehicleModalOpen(false)}
                 style={{
                     overlay: {
                         backgroundColor: 'rgba(0, 0, 0, 0.5)',
@@ -339,7 +328,7 @@ const VehicleManagement = () => {
             >
                 {selectedVehicle && (
                     <div>
-                        <RentVehicleForm vehicle={selectedVehicle} onUpdate={handleSubmitRentVehicle}/>
+                        <RentVehicleForm selectedVehicle={selectedVehicle} onUpdate={handleSubmitRentVehicle} />
                     </div>
                 )}
             </Modal>

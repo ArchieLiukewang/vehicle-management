@@ -1,6 +1,8 @@
 // src/components/Login.js
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import 'semantic-ui-css/semantic.min.css';
+import {Button, Form, Input} from "semantic-ui-react";
 
 const Login = ({toggleNav}) => {
 const [username, setUsername] = useState('');
@@ -46,31 +48,43 @@ const navigate  = useNavigate();
     navigate('/user-register');
 
   }
-  
+
 
   return (
-    <div>
-      <h2>Login</h2>
-      <form>
-        <label>
-          Username:
-          <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} />
-        </label>
-        <br />
-        <label>
-          Password:
-          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
-        </label>
-        <br />
-        <button type="button" onClick={handleLogin}>
-          Login
-        </button>
-        <button type="button" onClick={handleRegister}>
-          register
-        </button>
-      </form>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-    </div>
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: '40vh',
+
+      }}>
+        {/*<h2>Login</h2>*/}
+        <Form style={{width: '300px'}}>
+          <Form.Field>
+            <label>
+              Username:
+              <Input type="text" value={username} onChange={(e) => setUsername(e.target.value)}/>
+            </label>
+          </Form.Field>
+          <Form.Field>
+            <label>
+              Password:
+              <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)}/>
+            </label>
+          </Form.Field>
+
+          <div>
+            <Button type="button" onClick={handleLogin} primary>
+              Login
+            </Button> &nbsp;&nbsp;&nbsp;
+            <Button type="button" onClick={handleRegister} primary>
+              Register
+            </Button>
+          </div>
+
+        </Form>
+        {error && <p className="error-message">{error}</p>}
+      </div>
   );
 };
 

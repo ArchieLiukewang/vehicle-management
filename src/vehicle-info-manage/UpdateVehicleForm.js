@@ -1,6 +1,7 @@
 // UpdateForm.js
 
 import React, { useState } from 'react';
+import {Button, Form} from "semantic-ui-react";
 
 const UpdateVehicleForm = ({ vehicle, onUpdate, isAddVehicle }) => {
   const defaultVehicle = {
@@ -25,72 +26,66 @@ const UpdateVehicleForm = ({ vehicle, onUpdate, isAddVehicle }) => {
   };
 
   return (
-    <div>
-      <h2>Update Vehicle</h2>
-      <form>
-        <label>
-          Vehicle Name:
-          <input
-            type="text"
-            value={updatedVehicle.vehicle_name}
-            onChange={(e) => handleInputChange('vehicle_name', e.target.value)}
-          />
-        </label>
-        <br />
-        <label>
-          Plate Number:
-          <input
-            type="text"
-            readOnly={!isAddVehicle}
-            value={updatedVehicle.plate_number}
-            onChange={(e) => handleInputChange('plate_number', e.target.value)}
-          />
-        </label>
-        <br />
-        <label>
-          Vehicle Type:
-          <input
-            type="text"
-            value={updatedVehicle.vehicle_type}
-            onChange={(e) => handleInputChange('vehicle_type', e.target.value)}
-          />
-        </label>
-        <br/>
-        <label>
-        Price:
-          <input
-            type="text"
-            value={updatedVehicle.price}
-            onChange={(e) => handleInputChange('price', e.target.value)}
-          />
-        </label>
-        <br />
-        <label>
-        Vehicle Condition:
-          <input
-            type="text"
-            value={updatedVehicle.vehicle_condition}
-            onChange={(e) => handleInputChange('vehicle_condition', e.target.value)}
-          />
-        </label>
-        <br />
-        <label>
-        Rental Rate:
-          <input
-            type="text"
-            value={updatedVehicle.rental_rate}
-            onChange={(e) => handleInputChange('rental_rate', e.target.value)}
-          />
-        </label>
+      <div>
+        <h2>Update Vehicle</h2>
+        <Form>
+          <Form.Field>
+            <label>Vehicle Name:</label>
+            <input
+                type="text"
+                value={updatedVehicle.vehicle_name}
+                onChange={(e) => handleInputChange('vehicle_name', e.target.value)}
+            />
+          </Form.Field>
+          <Form.Field>
+            <label>Plate Number:</label>
+            <input
+                type="text"
+                readOnly={!isAddVehicle}
+                value={updatedVehicle.plate_number}
+                onChange={(e) => handleInputChange('plate_number', e.target.value)}
+            />
+          </Form.Field>
+          <Form.Field>
+            <label>Vehicle Type:</label>
+            <input
+                type="text"
+                value={updatedVehicle.vehicle_type}
+                onChange={(e) => handleInputChange('vehicle_type', e.target.value)}
+            />
+          </Form.Field>
+          <Form.Field>
+            <label>Price:</label>
+            <input
+                type="text"
+                value={updatedVehicle.price}
+                onChange={(e) => handleInputChange('price', e.target.value)}
+            />
+          </Form.Field>
+          <Form.Field>
+            <label>Vehicle Condition:</label>
+            <input
+                type="text"
+                value={updatedVehicle.vehicle_condition}
+                onChange={(e) => handleInputChange('vehicle_condition', e.target.value)}
+            />
+          </Form.Field>
+          <Form.Field>
+            <label>Rental Rate:</label>
+            <input
+                type="text"
+                value={updatedVehicle.rental_rate}
+                onChange={(e) => handleInputChange('rental_rate', e.target.value)}
+            />
+          </Form.Field>
 
-        
-        {/* Add similar input fields for other vehicle fields */}
-        <br />
-        <button type="button" onClick={handleSubmit}>
-          submit
-        </button>
-      </form>
-    </div>
+          {/* Add similar Form.Field components for other vehicle fields */}
+
+          <Button type="button" onClick={handleSubmit}>
+            Submit
+          </Button>
+        </Form>
+      </div>
   );
 };
 

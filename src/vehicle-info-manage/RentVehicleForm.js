@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 
-const RentVehicleForm = ({ onUpdate }) => {
+const RentVehicleForm = ({ selectedVehicle, onUpdate }) => {
   const [updatedRental, setUpdatedRental] = useState({
     driver_id: '12345',
     plate_number: 'ABC123', // Add your default plate_number value
@@ -54,7 +54,8 @@ const RentVehicleForm = ({ onUpdate }) => {
             Plate Number:
             <input
                 type="text"
-                value={updatedRental.plate_number}
+                value={selectedVehicle.plate_number}
+                readOnly
                 onChange={(e) => handleInputChange('plate_number', e.target.value)}
             />
           </label>
@@ -81,7 +82,8 @@ const RentVehicleForm = ({ onUpdate }) => {
             Rental Rate:
             <input
                 type="text"
-                value={updatedRental.rental_rate}
+                value={selectedVehicle.rental_rate}
+                readOnly
                 onChange={(e) => handleInputChange('rental_rate', e.target.value)}
             />
           </label>

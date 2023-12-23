@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import {Button, Container, Form, Header, Input} from "semantic-ui-react";
 
 
 const UserRegister =() => {
@@ -27,42 +28,37 @@ const UserRegister =() => {
   
 
   return (
-    <div>
-      <h2>Update User</h2>
-      <form>
-        <label>
-          User Name:
-          <input
-            type="text"
-            value={user?.username}
-            onChange={(e) => handleInputChange('username', e.target.value)}
-          />
-        </label>
-        <br />
-        <label>
-          Password:
-          <input
-            type="text"
-            value={user?.password}
-            onChange={(e) => handleInputChange('password', e.target.value)}
-          />
-        </label>
-        <br />
-        {/* <label>
-          User Type:
-          <input
-            type="text"
-            value={user.user_type}
-            onChange={(e) => handleInputChange('user_type', e.target.value)}
-          />
-        </label>
-        <br /> */}
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: '40vh',
 
-        <button type="button" onClick={handleSubmit}>
-          submit
-        </button>
-      </form>
-    </div>
+      }}>
+
+        <Form style={{width: '300px'}}>
+          <Form.Field>
+            <label>User Name</label>
+            <Input
+                type="text"
+                value={user?.username}
+                onChange={(e) => handleInputChange('username', e.target.value)}
+            />
+          </Form.Field>
+          <Form.Field>
+            <label>Password</label>
+            <Input
+                type="text"
+                value={user?.password}
+                onChange={(e) => handleInputChange('password', e.target.value)}
+            />
+          </Form.Field>
+
+          <Button type="button" onClick={handleSubmit} primary>
+            Register
+          </Button>
+        </Form>
+        </div>
   );
 };
 

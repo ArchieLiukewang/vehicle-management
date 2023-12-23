@@ -5,7 +5,7 @@ import React, { useState } from 'react';
 const RentVehicleForm = ({ selectedVehicle, onUpdate }) => {
   const [updatedRental, setUpdatedRental] = useState({
     driver_id: '12345',
-    plate_number: 'ABC123', // Add your default plate_number value
+    // plate_number: 'ABC123', // Add your default plate_number value
     id_card_number: 'ID123', // Add your default id_card_number value
     rental_mode: 'Monthly', // Add your default rental_mode value
     rental_rate: 1000, // Add your default rental_rate value

@@ -119,6 +119,7 @@ const VehicleManagement = () => {
 
     const handleSubmitRentVehicle = (updatedRental) => {
         console.log("updated Rental" + updatedRental);
+        updatedRental.plate_number = selectedVehicle.plate_number;
         axios.put(`http://localhost:5000/api/add-rental`, updatedRental)
             .then(response => {
                 console.log('Rental updated successfully:', response.data);

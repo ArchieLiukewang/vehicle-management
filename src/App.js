@@ -1,7 +1,7 @@
 // App.js
 import React, { useState } from 'react';
 import {BrowserRouter as Router, Routes, Route, Link, useNavigate, NavLink} from 'react-router-dom';
-import Login from './Login';
+import Login from './auth-context/Login';
 import VehicleManagement from './vehicle-info-manage/VehicleManagement';
 import RentalManage from './vehicle-rental-manage/RentalManage';
 import DriverManage from './driver-manage/DriverManage';
@@ -12,13 +12,18 @@ import { ChartManage } from './chart-manage/ChartManage';
 import { TagRoutes } from './chart-manage/ChartManage';
 import {Container, Menu} from "semantic-ui-react";
 import 'semantic-ui-css/semantic.min.css';
+import PrivateRoute from "./auth-context/PrivateRoute";
+import {AuthProvider} from "./auth-context/AuthContext";
+import RentalRateChart from "./chart-manage/RentalRateChart";
+import RentalPeriodChart from "./chart-manage/RentalPeriodChart";
+import VehicleStatusChart from "./chart-manage/VehicleStatusChart";
 
 
 
 
 const App = () => {
  
-  const isLoginPage = window.location.pathname === '/login';
+  const isLoginPage = window.location.pathname === '/login' || !sessionStorage.getItem("isLoggedIn");
   const [isNavVisible, setNavVisibility] =  useState(() => true);
   
 
@@ -28,6 +33,8 @@ const App = () => {
 
   return (
       <Router>
+        {/*<AuthProvider*/}
+        <AuthProvider>
         <Container style={{ display: 'flex', minHeight: '100vh', flexDirection: 'column' }}>
           {/* Navigation Section */}
           {!isLoginPage && (
@@ -58,19 +65,49 @@ const App = () => {
 
           <Container fluid style={{ flex: '1', padding: '10px' }}>
             <Routes>
-              <Route path="/home" element={<Home />} />
-              <Route path="/login" element={<Login toggleNav={toggleNavVisibility} />} />
-              <Route path="/vehicle-management" element={<VehicleManagement />} />
-              <Route path="/rental-management" element={<RentalManage />} />
-              <Route path="/customer-management" element={<CustomerManage />} />
-              <Route path="/driver-management" element={<DriverManage />} />
-              <Route path="/user-management" element={<UserManage />} />
               <Route path="/user-register" element={<UserRegister />} />
-              <Route path="/chart-management/*" element={<TagRoutes />} />
-              <Route path="/chart-management" element={<ChartManage />} />
+              <Route path="/login" element={<Login toggleNav={toggleNavVisibility} />} />
+              <Route path="/home" element={ <PrivateRoute/>} >
+                   <Route  path='/home' element={<Home/>}/>
+              </Route>
+
+              <Route path="/vehicle-management" element={ <PrivateRoute/>} >
+                <Route  path='/vehicle-management' element={<VehicleManagement/>}/>
+              </Route>
+
+              <Route path="/rental-management" element={ <PrivateRoute/>} >
+                <Route  path='/rental-management' element={<RentalManage/>}/>
+              </Route>
+
+              <Route path="/customer-management" element={ <PrivateRoute/>} >
+                <Route  path='/customer-management' element={<CustomerManage/>}/>
+              </Route>
+              <Route path="/driver-management" element={ <PrivateRoute/>} >
+                <Route  path='/driver-management' element={<DriverManage/>}/>
+              </Route>
+              <Route path="/user-management" element={ <PrivateRoute/>} >
+                <Route  path='/user-management' element={<UserManage/>}/>
+              </Route>
+
+              <Route path="/chart-management/rate-chart" element={ <PrivateRoute/>} >
+                <Route  path='/chart-management/rate-chart' element={<RentalRateChart/>}/>
+              </Route>
+              <Route path="/chart-management/period-chart" element={ <PrivateRoute/>} >
+                <Route  path='/chart-management/period-chart' element={<RentalPeriodChart/>}/>
+              </Route>
+              <Route path="/chart-management/status-chart" element={ <PrivateRoute/>} >
+                <Route  path='/chart-management/status-chart' element={<VehicleStatusChart/>}/>
+              </Route>
+
+              <Route path="/chart-management" element={ <PrivateRoute/>} >
+                <Route  path='/chart-management' element={<ChartManage/>}/>
+              </Route>
+
+
             </Routes>
           </Container>
         </Container>
+          </AuthProvider>
       </Router>
   );
 };

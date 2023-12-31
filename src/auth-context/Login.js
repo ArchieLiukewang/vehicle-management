@@ -3,12 +3,13 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import 'semantic-ui-css/semantic.min.css';
 import {Button, Form, Input} from "semantic-ui-react";
-
+import {useAuth} from "./AuthContext";
 const Login = ({toggleNav}) => {
 const [username, setUsername] = useState('');
 const [password, setPassword] = useState('');
 const [error, setError] = useState('');
 const navigate  = useNavigate();
+const  {login} = useAuth();
 
 
   const handleLogin = async () => {
@@ -28,10 +29,9 @@ const navigate  = useNavigate();
         const jsonBody = await response.json();
         console.log('user_type'+jsonBody.user_type);
         sessionStorage.setItem('user_type',jsonBody.user_type);
-
-
         console.log('username'+username);
         sessionStorage.setItem('username',username);
+        sessionStorage.setItem('isLoggedIn',"true");
         toggleNav();
         navigate('/home');
       } else {

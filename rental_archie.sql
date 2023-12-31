@@ -71,7 +71,8 @@ CREATE TABLE users (
                        user_id INT AUTO_INCREMENT PRIMARY KEY,
                        username VARCHAR(50),
                        password VARCHAR(50),
-                       user_type VARCHAR(20)
+                       user_type VARCHAR(20),
+                       id_card_number VARCHAR(20)
 );
 
 

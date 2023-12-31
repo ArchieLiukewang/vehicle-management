@@ -489,6 +489,67 @@ app.put('/api/users/add', (req, res) => {
   });
 });
 
+app.put('/api/users/register', (req, res) => {
+    const { username, password, user_type, id_card_number, name, gender, birth_date, address, phone } = req.body;
+
+    // Validation (you might want to add more validation)
+    if (!username || !password || !user_type || !id_card_number || !name || !gender || !birth_date || !address || !phone) {
+        return res.status(400).json({ error: 'All fields are required for adding a new user and customer.' });
+    }
+
+    // Use a transaction to ensure that either both inserts succeed or both fail
+    pool.getConnection((err, connection) => {
+        if (err) {
+            console.error('Error getting MySQL connection:', err);
+            return res.status(500).json({ error: 'Internal Server Error' });
+        }
+
+        connection.beginTransaction((beginErr) => {
+            if (beginErr) {
+                console.error('Error beginning MySQL transaction:', beginErr);
+                return res.status(500).json({ error: 'Internal Server Error' });
+            }
+
+            // Insert new user into the MySQL database
+            const addUserQuery = 'INSERT INTO users (username, password, user_type) VALUES (?, ?, ?)';
+            const userValues = [username, password, user_type];
+
+            connection.query(addUserQuery, userValues, (userErr, userResult) => {
+                if (userErr) {
+                    return connection.rollback(() => {
+                        console.error('Error adding a new user to the MySQL database:', userErr);
+                        res.status(500).json({ error: 'Internal Server Error' });
+                    });
+                }
+
+                // Insert new customer into the MySQL database
+                const addCustomerQuery = 'INSERT INTO customers (id_card_number, name, gender, birth_date, address, phone) VALUES (?, ?, ?, ?, ?, ?)';
+                const customerValues = [id_card_number, name, gender, birth_date, address, phone];
+
+                connection.query(addCustomerQuery, customerValues, (customerErr, customerResult) => {
+                    if (customerErr) {
+                        return connection.rollback(() => {
+                            console.error('Error adding a new customer to the MySQL database:', customerErr);
+                            res.status(500).json({ error: 'Internal Server Error' });
+                        });
+                    }
+
+                    connection.commit((commitErr) => {
+                        if (commitErr) {
+                            return connection.rollback(() => {
+                                console.error('Error committing MySQL transaction:', commitErr);
+                                res.status(500).json({ error: 'Internal Server Error' });
+                            });
+                        }
+
+                        res.json({ message: 'New user and customer added successfully.' });
+                        connection.release();
+                    });
+                });
+            });
+        });
+    });
+});
 
 
 /*********************************************************************** */

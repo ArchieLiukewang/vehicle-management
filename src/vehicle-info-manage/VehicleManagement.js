@@ -188,7 +188,9 @@ const VehicleManagement = () => {
     return (
         <div>
             <h1>Vehicle Information Management</h1>
-            <Table celled style={{ width: '100%' }}>
+            <br/>
+            <h2> Available Vehicle</h2>
+            <Table celled style={{width: '100%'}}>
                 <Table.Header>
                     <Table.Row>
                         <Table.HeaderCell>Vehicle Name</Table.HeaderCell>
@@ -201,44 +203,107 @@ const VehicleManagement = () => {
                         <Table.HeaderCell>Actions</Table.HeaderCell>
                     </Table.Row>
                 </Table.Header>
+
+
                 <Table.Body>
                     {vehicles.map((vehicle) => (
-                        <Table.Row key={vehicle.plate_number}>
-                            <Table.Cell>{vehicle.vehicle_name}</Table.Cell>
-                            <Table.Cell>{vehicle.plate_number}</Table.Cell>
-                            <Table.Cell>{vehicle.vehicle_type}</Table.Cell>
-                            <Table.Cell>{vehicle.price}</Table.Cell>
-                            <Table.Cell>{vehicle.purchase_date}</Table.Cell>
-                            <Table.Cell>{vehicle.vehicle_condition}</Table.Cell>
-                            <Table.Cell>{vehicle.rental_rate}</Table.Cell>
-                            <Table.Cell>
-                                {(sessionStorage.getItem("user_type") === 'admin' || sessionStorage.getItem("user_type") === 'system_admin') && (
-                                    <div>
-                                        <Button onClick={(e) => handleUpdateVehicle(e, vehicle)}>
-                                            Update Vehicle
-                                        </Button>
-                                        <Button onClick={(e) => handleDeleteVehicle(e, vehicle)}>
-                                            Delete Vehicle
-                                        </Button>
-                                    </div>
-                                )}
-                                <Button onClick={(e) => handleQueryRental(e, vehicle)}>
-                                    Query Rental Information
-                                </Button>
-                                <Button onClick={(e) => { setSelectedVehicle(vehicle); setRentVehicleModalOpen(true); }}>
-                                    Rent Vehicle
-                                </Button>
-                                <Button onClick={(e) => handleReturnVehicle(e, vehicle)}>
-                                    Return Vehicle
-                                </Button>
-                            </Table.Cell>
-                        </Table.Row>
+                        vehicle.vehicle_condition == 'unused' && (
+                            <Table.Row key={vehicle.plate_number}>
+                                <Table.Cell>{vehicle.vehicle_name}</Table.Cell>
+                                <Table.Cell>{vehicle.plate_number}</Table.Cell>
+                                <Table.Cell>{vehicle.vehicle_type}</Table.Cell>
+                                <Table.Cell>{vehicle.price}</Table.Cell>
+                                <Table.Cell>{vehicle.purchase_date}</Table.Cell>
+                                <Table.Cell>{vehicle.vehicle_condition}</Table.Cell>
+                                <Table.Cell>{vehicle.rental_rate}</Table.Cell>
+                                <Table.Cell>
+                                    {(sessionStorage.getItem("user_type") === 'admin' || sessionStorage.getItem("user_type") === 'system_admin') && (
+                                        <div>
+                                            <Button onClick={(e) => handleUpdateVehicle(e, vehicle)}>
+                                                Update Vehicle
+                                            </Button>
+                                            <Button onClick={(e) => handleDeleteVehicle(e, vehicle)}>
+                                                Delete Vehicle
+                                            </Button>
+                                        </div>
+                                    )}
+                                    <Button onClick={(e) => handleQueryRental(e, vehicle)}>
+                                        Query Rental Information
+                                    </Button>
+                                    <Button onClick={(e) => {
+                                        setSelectedVehicle(vehicle);
+                                        setRentVehicleModalOpen(true);
+                                    }}>
+                                        Rent Vehicle
+                                    </Button>
+
+                                </Table.Cell>
+                            </Table.Row>)
                     ))}
+
                 </Table.Body>
+
+            </Table>
+
+            <br/>
+            <h2> Unavailable Vehicle</h2>
+            <Table celled style={{width: '100%'}}>
+                <Table.Header>
+                    <Table.Row>
+                        <Table.HeaderCell>Vehicle Name</Table.HeaderCell>
+                        <Table.HeaderCell>Plate Number</Table.HeaderCell>
+                        <Table.HeaderCell>Vehicle Type</Table.HeaderCell>
+                        <Table.HeaderCell>Price</Table.HeaderCell>
+                        <Table.HeaderCell>Purchase Date</Table.HeaderCell>
+                        <Table.HeaderCell>Vehicle Condition</Table.HeaderCell>
+                        <Table.HeaderCell>Rental Rate</Table.HeaderCell>
+                        <Table.HeaderCell>Actions</Table.HeaderCell>
+                    </Table.Row>
+                </Table.Header>
+
+
+                <Table.Body>
+                    {vehicles.map((vehicle) => (
+                        vehicle.vehicle_condition == 'under_rented' && (
+                            <Table.Row key={vehicle.plate_number}>
+                                <Table.Cell>{vehicle.vehicle_name}</Table.Cell>
+                                <Table.Cell>{vehicle.plate_number}</Table.Cell>
+                                <Table.Cell>{vehicle.vehicle_type}</Table.Cell>
+                                <Table.Cell>{vehicle.price}</Table.Cell>
+                                <Table.Cell>{vehicle.purchase_date}</Table.Cell>
+                                <Table.Cell>{vehicle.vehicle_condition}</Table.Cell>
+                                <Table.Cell>{vehicle.rental_rate}</Table.Cell>
+                                <Table.Cell>
+                                    {(sessionStorage.getItem("user_type") === 'admin' || sessionStorage.getItem("user_type") === 'system_admin') && (
+                                        <div>
+                                            <Button onClick={(e) => handleUpdateVehicle(e, vehicle)}>
+                                                Update Vehicle
+                                            </Button>
+                                            <Button onClick={(e) => handleDeleteVehicle(e, vehicle)}>
+                                                Delete Vehicle
+                                            </Button>
+                                        </div>
+                                    )}
+                                    <Button onClick={(e) => handleQueryRental(e, vehicle)}>
+                                        Query Rental Information
+                                    </Button>
+
+                                    <Button onClick={(e) => handleReturnVehicle(e, vehicle)}>
+                                        Return Vehicle
+                                    </Button>
+                                </Table.Cell>
+                            </Table.Row>)
+                    ))}
+
+                </Table.Body>
+
             </Table>
 
             {sessionStorage.getItem("user_type") === 'admin' &&
-                <Button onClick={(e) => { setAddVehicle(true); setModalOpen(true); }}>
+                <Button onClick={(e) => {
+                    setAddVehicle(true);
+                    setModalOpen(true);
+                }}>
                     Add Vehicle
                 </Button>
             }
@@ -246,7 +311,7 @@ const VehicleManagement = () => {
             <Modal
                 open={isModalOpen}
                 onClose={() => setModalOpen(false)}
-                style={ {
+                style={{
                     width: '30%', // Adjust the width as needed
                     margin: 'auto',
                     backgroundColor: 'white',
@@ -257,20 +322,23 @@ const VehicleManagement = () => {
             >
                 {(selectedVehicle && !isAddVehicle) && (
                     <div>
-                        <UpdateForm vehicle={selectedVehicle} onUpdate={handleSubmitVehicle} />
+                        <UpdateForm vehicle={selectedVehicle} onUpdate={handleSubmitVehicle}/>
                     </div>
                 )}
 
                 {isAddVehicle && (
                     <div>
-                        <UpdateForm onUpdate={handleSubmitVehicle} isAddVehicle={isAddVehicle} />
+                        <UpdateForm onUpdate={handleSubmitVehicle} isAddVehicle={isAddVehicle}/>
                     </div>
                 )}
             </Modal>
 
             <Modal
                 open={isRentalModalOpen}
-                onClose={() => {setRentalModalOpen(false);setRentalData(null)}}
+                onClose={() => {
+                    setRentalModalOpen(false);
+                    setRentalData(null)
+                }}
                 style={{
                     overlay: {
                         backgroundColor: 'rgba(0, 0, 0, 0.5)',
@@ -285,7 +353,7 @@ const VehicleManagement = () => {
                 {rentalData && selectedVehicle && rentalData.length > 0 && (
                     <div>
                         <h2>Rental Information: {selectedVehicle.vehicle_name} - {selectedVehicle.plate_number}</h2>
-                        <Table celled style={{ width: '100%' }}>
+                        <Table celled style={{width: '100%'}}>
                             <Table.Header>
                                 <Table.Row>
                                     <Table.HeaderCell>Rental Mode</Table.HeaderCell>
@@ -329,7 +397,7 @@ const VehicleManagement = () => {
             >
                 {selectedVehicle && (
                     <div>
-                        <RentVehicleForm selectedVehicle={selectedVehicle} onUpdate={handleSubmitRentVehicle} />
+                        <RentVehicleForm selectedVehicle={selectedVehicle} onUpdate={handleSubmitRentVehicle}/>
                     </div>
                 )}
             </Modal>

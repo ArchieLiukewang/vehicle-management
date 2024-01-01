@@ -551,9 +551,77 @@ app.put('/api/users/register', (req, res) => {
     });
 });
 
+app.delete('/api/customers/delete/:id_card_number', (req, res) => {
+    const idCardNumber = req.params.id_card_number;
+
+    const queryDeleteCustomer = 'DELETE FROM customers WHERE id_card_number = ?';
+
+    pool.query(queryDeleteCustomer, [idCardNumber], (err, result) => {
+        if (err) {
+            console.error('Error deleting customer from MySQL database:', err);
+            res.status(500).json({ error: 'Internal Server Error' });
+        } else {
+            if (result.affectedRows === 0) {
+                // No customer with the specified id_card_number found
+                res.status(404).json({ error: 'Customer not found' });
+            } else {
+                res.json({ message: 'Customer deleted successfully' });
+            }
+        }
+    });
+});
+
+app.put('/api/customers/update/:id_card_number', (req, res) => {
+    const idCardNumber = req.params.id_card_number;
+    const updatedCustomer = req.body;
+
+    const queryUpdateCustomer = 'UPDATE customers SET ? WHERE id_card_number = ?';
+
+    // Assuming you need to format the birth_date as well
+    if (updatedCustomer.birth_date) {
+        const formattedBirthdate = new Date(updatedCustomer.birth_date).toISOString().split('T')[0];
+        updatedCustomer.birth_date = formattedBirthdate;
+    }
+
+    pool.query(queryUpdateCustomer, [updatedCustomer, idCardNumber], (err, result) => {
+        if (err) {
+            console.error('Error updating customer in MySQL database:', err);
+            res.status(500).json({ error: 'Internal Server Error' });
+        } else {
+            if (result.affectedRows === 0) {
+                // No customer with the specified id_card_number found
+                res.status(404).json({ error: 'Customer not found' });
+            } else {
+                res.json({ message: 'Customer updated successfully' });
+            }
+        }
+    });
+});
+
+
 
 /*********************************************************************** */
 //driver
+
+app.post('/api/customers/add', (req, res) => {
+    const newCustomer = req.body;
+
+    const queryAddCustomer = 'INSERT INTO customers SET ?';
+
+    // Assuming you need to format the birth_date as well
+    const formattedBirthdate = new Date(newCustomer.birth_date).toISOString().split('T')[0];
+    newCustomer.birth_date = formattedBirthdate;
+
+    pool.query(queryAddCustomer, newCustomer, (err, result) => {
+        if (err) {
+            console.error('Error adding customer to MySQL database:', err);
+            res.status(500).json({ error: 'Internal Server Error' });
+        } else {
+            res.json({ message: 'Customer added successfully', insertedId: result.insertId });
+        }
+    });
+});
+
 
 // Get all drivers API endpoint
 app.get('/api/drivers/all', (req, res) => {
